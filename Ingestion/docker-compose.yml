@@ -1,0 +1,13 @@
+name: postgre_sourcedb
+
+services:
+  download:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: download
+    command: tail -f /dev/null
+    volumes:
+      #- ./data:~/ingestion/data
+      - ${pwd}/kaggle.josn:/root/.kaggle/kaggle.json
+
