@@ -3,10 +3,10 @@ CREATE SCHEMA IF NOT EXISTS olist;
 
 CREATE TABLE IF NOT EXISTS  olist.geolocation (
     geolocation_zip_code_prefix int8 ,
-    geolocation_lat double precision NULL,
-    geolocation_lng double precision NULL,
-    geolocation_city varchar(255) NULL,
-    geolocation_state varchar(15) NULL,
+    geolocation_lat double precision NOT NULL,
+    geolocation_lng double precision NOT NULL,
+    geolocation_city varchar(255) NOT NULL,
+    geolocation_state varchar(15) NOT NULL
 );
 
 COPY olist.geolocation  (
@@ -20,10 +20,10 @@ FROM '/data/olist_geolocation_dataset.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TABLE  IF NOT EXISTS olist.customers (
     customer_id uuid PRIMARY KEY,
-    customer_unique_id uuid NULL,
+    customer_unique_id uuid NOT NULL,
     customer_zip_code_prefix int8 NULL,
-    customer_city varchar(255) NULL,
-    customer_state varchar(15) NULL
+    customer_city varchar(255) NOT NULL,
+    customer_state varchar(15) NOT NULL
 
 );
 
@@ -40,8 +40,8 @@ FROM '/data/olist_customers_dataset.csv' DELIMITER ',' CSV HEADER;
 CREATE TABLE IF NOT EXISTS olist.sellers (
     seller_id uuid PRIMARY KEY,
     seller_zip_code_prefix int8,
-    seller_city varchar(255) NULL,
-    seller_state varchar(15) NULL
+    seller_city varchar(255) NOT NULL,
+    seller_state varchar(15) NOT NULL
 );
 
 COPY olist.sellers  (
@@ -57,11 +57,11 @@ CREATE TABLE IF NOT EXISTS olist.orders (
     order_id uuid PRIMARY KEY,
     customer_id uuid REFERENCES olist.customers ON DELETE CASCADE,
     order_status varchar(50) NULL,
-    order_purchase_timestamp timestamp NULL,
-    order_approved_at timestamp NULL,
-    order_delivered_carrier_date timestamp NULL,
-    order_delivered_customer_date timestamp NULL,
-    order_estimated_delivery_date timestamp NULL
+    order_purchase_timestamp timestamp NOT NULL,
+    order_approved_at timestamp  NULL,
+    order_delivered_carrier_date timestamp  NULL,
+    order_delivered_customer_date timestamp  NULL,
+    order_estimated_delivery_date timestamp  NULL
     
 );
 
@@ -78,16 +78,29 @@ order_estimated_delivery_date
 )
 FROM '/data/olist_orders_dataset.csv' DELIMITER ',' CSV HEADER;
 
+CREATE TABLE olist.product_category_name_translation (
+    product_category_name varchar(255) PRIMARY KEY NOT NULL ,
+    product_category_name_english varchar(255) NOT NULL 
+);
+
+COPY olist.product_category_name_translation  (
+product_category_name ,
+product_category_name_english 
+)
+FROM '/data/product_category_name_translation.csv' DELIMITER ',' CSV HEADER;
+
+
+
 CREATE TABLE IF NOT EXISTS olist.products (
     product_id uuid PRIMARY KEY,
     product_category_name varchar(255) NULL,
-    product_name_lenght int8 NULL,
+    product_name_lenght int8  NULL,
     product_description_lenght int8 NULL,
     product_photos_qty int8 NULL,
-    product_weight_g int8 NULL,
-    product_length_cm int8 NULL,
-    product_height_cm int8 NULL,
-    product_width_cm int8 NULL
+    product_weight_g int8  NULL,
+    product_length_cm int8  NULL,
+    product_height_cm int8  NULL,
+    product_width_cm int8  NULL
 );
 
 
@@ -108,10 +121,10 @@ FROM '/data/olist_products_dataset.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TABLE IF NOT EXISTS olist.order_payments (
     order_id uuid REFERENCES olist.orders ON DELETE CASCADE,
-    payment_sequential int4 NULL,
-    payment_type varchar(50) NULL,
-    payment_installments int4 NULL,
-    payment_value numeric(8, 3) NULL,
+    payment_sequential int4 NOT NULL,
+    payment_type varchar(50) NOT NULL,
+    payment_installments int4 NOT NULL,
+    payment_value numeric(8, 3) NOT NULL,
     PRIMARY KEY (order_id, payment_sequential)
 
 );
@@ -132,8 +145,8 @@ CREATE TABLE IF NOT EXISTS olist.order_reviews (
     review_score int4 NULL,
     review_comment_title varchar(255) NULL,
     review_comment_message varchar(512) NULL,
-    review_creation_date timestamp NULL,
-    review_answer_timestamp timestamp NULL,
+    review_creation_date timestamp NOT NULL,
+    review_answer_timestamp timestamp NOT NULL,
     PRIMARY KEY (review_id,order_id)
 
 );
@@ -177,3 +190,7 @@ price ,
 freight_value 
 )
 FROM '/data/olist_order_items_dataset.csv' DELIMITER ',' CSV HEADER;
+
+
+
+
