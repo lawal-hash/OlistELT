@@ -3,10 +3,10 @@ CREATE SCHEMA IF NOT EXISTS olist;
 
 CREATE TABLE IF NOT EXISTS  olist.geolocation (
     geolocation_zip_code_prefix int8 ,
-    geolocation_lat float4 NULL,
-    geolocation_lng float4 NULL,
+    geolocation_lat double precision NULL,
+    geolocation_lng double precision NULL,
     geolocation_city varchar(255) NULL,
-    geolocation_state varchar(15) NULL
+    geolocation_state varchar(15) NULL,
 );
 
 COPY olist.geolocation  (
@@ -111,7 +111,9 @@ CREATE TABLE IF NOT EXISTS olist.order_payments (
     payment_sequential int4 NULL,
     payment_type varchar(50) NULL,
     payment_installments int4 NULL,
-    payment_value numeric(8, 3) NULL
+    payment_value numeric(8, 3) NULL,
+    PRIMARY KEY (order_id, payment_sequential)
+
 );
 
 COPY olist.order_payments  (
@@ -131,7 +133,9 @@ CREATE TABLE IF NOT EXISTS olist.order_reviews (
     review_comment_title varchar(255) NULL,
     review_comment_message varchar(512) NULL,
     review_creation_date timestamp NULL,
-    review_answer_timestamp timestamp NULL
+    review_answer_timestamp timestamp NULL,
+    PRIMARY KEY (review_id,order_id)
+
 );
 
 COPY olist.order_reviews  (
@@ -156,9 +160,10 @@ CREATE TABLE IF NOT EXISTS olist.order_items (
     order_item_id int4 NULL,
     product_id uuid REFERENCES olist.products ON DELETE CASCADE,
     seller_id uuid REFERENCES olist.sellers ON DELETE CASCADE,
-    shipping_limit_date timestamp NULL,
-    price numeric(8, 3) NULL,
-    freight_value numeric(8, 3) NULL
+    shipping_limit_date timestamp NOT NULL,
+    price numeric(8, 3) NOT NULL,
+    freight_value numeric(8, 3) NOT NULL,
+    PRIMARY KEY (order_id, order_item_id)
   
 );
 
