@@ -2,7 +2,7 @@
 CREATE SCHEMA IF NOT EXISTS olist;
 
 CREATE TABLE IF NOT EXISTS  olist.geolocation (
-    geolocation_zip_code_prefix int8 PRIMARY KEY,
+    geolocation_zip_code_prefix int8 ,
     geolocation_lat float4 NULL,
     geolocation_lng float4 NULL,
     geolocation_city varchar(255) NULL,
@@ -20,10 +20,10 @@ FROM '/data/olist_geolocation_dataset.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TABLE  IF NOT EXISTS olist.customers (
     customer_id uuid PRIMARY KEY,
-    customer_unique_id uuid REFERENCES olist.geolocation(geolocation_zip_code_prefix) ON DELETE CASCADE,
-    customer_zip_code_prefix int4 NULL,
+    customer_unique_id uuid NULL,
+    customer_zip_code_prefix int8 NULL,
     customer_city varchar(255) NULL,
-    customer_state varchar(50) NULL
+    customer_state varchar(15) NULL
 
 );
 
@@ -39,9 +39,9 @@ FROM '/data/olist_customers_dataset.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TABLE IF NOT EXISTS olist.sellers (
     seller_id uuid PRIMARY KEY,
-    seller_zip_code_prefix int4 REFERENCES olist.geolocation(geolocation_zip_code_prefix) ON DELETE CASCADE,
+    seller_zip_code_prefix int8,
     seller_city varchar(255) NULL,
-    seller_state varchar(50) NULL
+    seller_state varchar(15) NULL
 );
 
 COPY olist.sellers  (
@@ -81,13 +81,13 @@ FROM '/data/olist_orders_dataset.csv' DELIMITER ',' CSV HEADER;
 CREATE TABLE IF NOT EXISTS olist.products (
     product_id uuid PRIMARY KEY,
     product_category_name varchar(255) NULL,
-    product_name_lenght int4 NULL,
-    product_description_lenght int4 NULL,
-    product_photos_qty int4 NULL,
-    product_weight_g int4 NULL,
-    product_length_cm int4 NULL,
-    product_height_cm int4 NULL,
-    product_width_cm int4 NULL
+    product_name_lenght int8 NULL,
+    product_description_lenght int8 NULL,
+    product_photos_qty int8 NULL,
+    product_weight_g int8 NULL,
+    product_length_cm int8 NULL,
+    product_height_cm int8 NULL,
+    product_width_cm int8 NULL
 );
 
 
@@ -111,7 +111,7 @@ CREATE TABLE IF NOT EXISTS olist.order_payments (
     payment_sequential int4 NULL,
     payment_type varchar(50) NULL,
     payment_installments int4 NULL,
-    payment_value float4 NULL
+    payment_value numeric(8, 3) NULL
 );
 
 COPY olist.order_payments  (
@@ -125,12 +125,12 @@ FROM '/data/olist_order_payments_dataset.csv' DELIMITER ',' CSV HEADER;
 
 
 CREATE TABLE IF NOT EXISTS olist.order_reviews (
-    review_id varchar(255) PRIMARY KEY,
+    review_id uuid,
     order_id uuid REFERENCES olist.orders ON DELETE CASCADE,
     review_score int4 NULL,
     review_comment_title varchar(255) NULL,
     review_comment_message varchar(512) NULL,
-    review_creation_date varchar(255) NULL,
+    review_creation_date timestamp NULL,
     review_answer_timestamp timestamp NULL
 );
 
@@ -153,12 +153,12 @@ FROM '/data/olist_order_reviews_dataset.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TABLE IF NOT EXISTS olist.order_items (
     order_id uuid REFERENCES olist.orders ON DELETE CASCADE,
-    order_item_id int4 PRIMARY KEY,
+    order_item_id int4 NULL,
     product_id uuid REFERENCES olist.products ON DELETE CASCADE,
     seller_id uuid REFERENCES olist.sellers ON DELETE CASCADE,
     shipping_limit_date timestamp NULL,
     price numeric(8, 3) NULL,
-    freight_value numeric(8, 3) NULL, 
+    freight_value numeric(8, 3) NULL
   
 );
 
