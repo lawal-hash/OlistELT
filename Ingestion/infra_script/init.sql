@@ -18,6 +18,7 @@ geolocation_state
 )
 FROM '/data/olist_geolocation_dataset.csv' DELIMITER ',' CSV HEADER;
 
+
 CREATE TABLE  IF NOT EXISTS olist.customers (
     customer_id uuid PRIMARY KEY,
     customer_unique_id uuid NOT NULL,

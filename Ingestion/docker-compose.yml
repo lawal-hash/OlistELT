@@ -1,13 +1,33 @@
 name: postgre_sourcedb
 
+version: '3'
 services:
-  download:
+  data_download:
     build: 
       context: .
       dockerfile: Dockerfile
-    container_name: download
-    command: tail -f /dev/null
+    container_name: data_download
     volumes:
-      #- ./data:~/ingestion/data
-      - ${pwd}/kaggle.josn:/root/.kaggle/kaggle.json
+      - /Users/sophialawal/Documents/capstone/OlistELT/Ingestion/data:/root/ingestion/data
 
+
+  postgre:
+    image: postgres:16.3-bullseye
+    container_name: postgre
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-notsecure}
+      POSTGRES_DB: ${POSTGRES_DB:-ecommerce}
+    ports:
+      - "5434:5432"
+    depends_on:
+      data_download:
+        condition: service_completed_successfully
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./data:/data
+      - ./infra_script/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+
+volumes:
+  postgres_data:

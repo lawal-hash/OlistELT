@@ -3,3 +3,4 @@ ingestion/data/*
 ingestion/data/.gitkeep
 brazilian-ecommerce.zip
 kaggle.json
+ingestion/.env
