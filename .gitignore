@@ -5,3 +5,5 @@ brazilian-ecommerce.zip
 kaggle.json
 ingestion/.env
 logs/
+airflow/.env
+__pycache__/
