@@ -7,3 +7,4 @@ ingestion/.env
 logs/
 airflow/.env
 __pycache__/
+airflow/config/*
