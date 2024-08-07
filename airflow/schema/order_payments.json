@@ -1,0 +1,27 @@
+[
+    {
+        "name": "order_id",
+        "type": "STRING",
+        "mode": "REQUIRED"
+    },
+    {
+        "name": "payment_sequential",
+        "type": "INTEGER",
+        "mode": "REQUIRED"
+    },
+    {
+        "name": "payment_type",
+        "type": "STRING",
+        "mode": "REQUIRED"
+    },
+    {
+        "name": "payment_installments",
+        "type": "INTEGER",
+        "mode": "REQUIRED"
+    },
+    {
+        "name": "payment_value",
+        "type": "NUMERIC",
+        "mode": "REQUIRED"
+    }
+]
