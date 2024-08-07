@@ -13,57 +13,52 @@ import json
 import pandas as pd
 
 
-@task_group
-def extract_data_from_postgres(table_names: list, postgres_conn_id: str = "postgres_conn_id"):
+@task
+def read_table():
+    return [
+        "geolocation",
+        "customers",
+        "sellers",
+        "orders",
+        "product_category_name_translation",
+        "products",
+        "order_payments",
+        "order_reviews",
+        "order_items",
+    ]
+
+
+@task
+def extract_table(table_name: str, postgres_conn_id: str):
     pg_hook = PostgresHook(postgres_conn_id=postgres_conn_id)
-    extract_data = {}
-    for table_name in table_names:
-
-        @task(task_id=f"fetch_data_{table_name}")
-        def extract_table(table_name: str = table_names):
-            results = pg_hook.run(
-                handler=fetch_all_handler,
-                parameters=[],
-                sql=f" SELECT * FROM olist.{table_name} limit 3;",
-            )
-            return results
-
-        extract_data[table_name] = extract_table(table_name=table_name)
-    return extract_data
+    results = pg_hook.run(
+        handler=fetch_all_handler,
+        parameters=[],
+        sql=f" SELECT * FROM olist.{table_name};",
+    )
+    return results
 
 
-@task_group
-def load_data_into_bigquery(data, bigquery_conn_id, project_id, dataset_id):
+@task
+def load_table(data, bigquery_conn_id, project_id, dataset_id, table_name):
     bq_hook = BigQueryHook(gcp_conn_id=bigquery_conn_id)
-    for key in data:
-        record = data[key]
-
-        @task(task_id=f"load_data_{key}")
-        def load_table(key, bigquery_conn_id, project_id, dataset_id):
-            record = data[key]
-            schema, column_names = get_schema_from_gcs(key, bigquery_conn_id)
-            bq_hook.create_empty_table(
-                project_id=project_id,
-                dataset_id=dataset_id,
-                table_id=key,
-                schema_fields=schema,
-                location="europe-west3 ",
-                exists_ok=True,
-            )
-            df = pd.DataFrame(record, columns=column_names)
-            # To Do: make idempotent
-            bq_hook.insert_all(
-                project_id=project_id,
-                dataset_id=dataset_id,
-                table_id=key,
-                rows=df.to_dict(orient="records"),
-            )
-
-        load_table(key, bigquery_conn_id, project_id, dataset_id)
-    return "done"
-
-
-
+    schema, column_names = get_schema_from_gcs(table_name, bigquery_conn_id)
+    bq_hook.create_empty_table(
+        project_id=project_id,
+        dataset_id=dataset_id,
+        table_id=table_name,
+        schema_fields=schema,
+        location="europe-west3 ",
+        exists_ok=True,
+    )
+    df = pd.DataFrame(data, columns=column_names)
+    # To Do: make idempotent
+    bq_hook.insert_all(
+        project_id=project_id,
+        dataset_id=dataset_id,
+        table_id=table_name,
+        rows=df.to_dict(orient="records"),
+    )
 
 
 @provide_session
