@@ -40,7 +40,7 @@ def extract_table(table_name: str, postgres_conn_id: str):
 
 
 @task
-def load_table(data, bigquery_conn_id, project_id, dataset_id, table_name):
+def load_table(data, bigquery_conn_id, project_id, dataset_id, table_name,chunk_size=5000):
     bq_hook = BigQueryHook(gcp_conn_id=bigquery_conn_id)
     schema, column_names = get_schema_from_gcs(table_name, bigquery_conn_id)
     bq_hook.create_empty_table(
@@ -51,14 +51,17 @@ def load_table(data, bigquery_conn_id, project_id, dataset_id, table_name):
         location="europe-west3 ",
         exists_ok=True,
     )
+    # ToDo: Implement idempotent insert
     df = pd.DataFrame(data, columns=column_names)
-    # To Do: make idempotent
-    bq_hook.insert_all(
-        project_id=project_id,
-        dataset_id=dataset_id,
-        table_id=table_name,
-        rows=df.to_dict(orient="records"),
-    )
+    length = len(df)
+    for i in range(0, length, chunk_size):
+        
+        bq_hook.insert_all(
+            project_id=project_id,
+            dataset_id=dataset_id,
+            table_id=table_name,
+            rows=df.iloc[i : i + chunk_size, :].to_dict(orient="records"),
+        )
 
 
 @provide_session
