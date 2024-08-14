@@ -10,3 +10,4 @@ __pycache__/
 airflow/config/*
 dbt-venv/
 dbt/*.json
+dashboard/.streamlit/*
