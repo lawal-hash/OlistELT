@@ -1,16 +1,15 @@
-from airflow.providers.google.cloud.hooks.bigquery import BigQueryHook
-from airflow.decorators import dag, task
-
-
-from airflow.providers.postgres.hooks.postgres import PostgresHook
-from airflow.providers.common.sql.hooks.sql import fetch_all_handler
-from airflow.decorators import task, task_group
-from airflow.utils.db import provide_session
-from airflow.models import XCom
-from datetime import datetime, timedelta, timezone
-from airflow.providers.google.cloud.hooks.gcs import GCSHook, _parse_gcs_url
 import json
+from datetime import datetime, timedelta, timezone
+from json import loads
+
 import pandas as pd
+from airflow.decorators import task
+from airflow.models import XCom
+from airflow.providers.common.sql.hooks.sql import fetch_all_handler
+from airflow.providers.google.cloud.hooks.bigquery import BigQueryHook
+from airflow.providers.google.cloud.hooks.gcs import GCSHook, _parse_gcs_url
+from airflow.providers.postgres.hooks.postgres import PostgresHook
+from airflow.utils.db import provide_session
 
 
 @task
@@ -40,7 +39,9 @@ def extract_table(table_name: str, postgres_conn_id: str):
 
 
 @task
-def load_table(data, bigquery_conn_id, project_id, dataset_id, table_name,chunk_size=5000):
+def load_table(
+    data, bigquery_conn_id, project_id, dataset_id, table_name, chunk_size=5000
+):
     bq_hook = BigQueryHook(gcp_conn_id=bigquery_conn_id)
     schema, column_names = get_schema_from_gcs(table_name, bigquery_conn_id)
     bq_hook.create_empty_table(
@@ -55,12 +56,15 @@ def load_table(data, bigquery_conn_id, project_id, dataset_id, table_name,chunk_
     df = pd.DataFrame(data, columns=column_names)
     length = len(df)
     for i in range(0, length, chunk_size):
-        
+        rows = df.iloc[i:i + chunk_size, :].to_json(
+            orient="records", date_format="iso"
+        )
+
         bq_hook.insert_all(
             project_id=project_id,
             dataset_id=dataset_id,
             table_id=table_name,
-            rows=df.iloc[i : i + chunk_size, :].to_dict(orient="records"),
+            rows=loads(rows),
         )
 
 
@@ -77,7 +81,7 @@ def cleanup__xcom(session=None):
     session.query(XCom).filter(XCom.execution_date <= ts_limit).delete()
 
 
-def get_schema_from_gcs(table_name: str, gcp_conn_id) -> list:
+def get_schema_from_gcs(table_name: str, gcp_conn_id) -> tuple:
     url = f"gs://bigquery_schema_airflow/schema/{table_name}.json"
     gcs_bucket, gcs_object = _parse_gcs_url(url)
     gcs_hook = GCSHook(gcp_conn_id=gcp_conn_id)
