@@ -1,4 +1,8 @@
 
 kaggle datasets download -d olistbr/brazilian-ecommerce
-mkdir data/
-unzip brazilian-ecommerce.zip -d data/
+if [ -d data/ ]; then 
+    unzip -o brazilian-ecommerce.zip -d data/
+else
+    mkdir data/
+    unzip brazilian-ecommerce.zip -d data/
+fi

@@ -1,4 +1,4 @@
---CREATE DATABASE ecommerce;
+--CREATE schema;
 CREATE SCHEMA IF NOT EXISTS olist;
 
 CREATE TABLE IF NOT EXISTS  olist.geolocation (
