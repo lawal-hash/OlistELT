@@ -62,9 +62,6 @@ def load_table(
     )
     client = bq_hook.get_client()
     df = pd.DataFrame(data, columns=column_names)
-    #length = len(df)
-    #for i in range(0, length, chunk_size):
-    #    rows = df.iloc[i:i + chunk_size, :]
     client.load_table_from_dataframe(df, f"{dataset_id}.{table_name}", location="europe-west3",job_config=job_config)
 
 
