@@ -1,6 +1,4 @@
 import json
-from datetime import datetime, timedelta, timezone
-from json import loads
 
 import pandas as pd
 from airflow.decorators import task
@@ -11,6 +9,8 @@ from airflow.providers.google.cloud.hooks.gcs import GCSHook, _parse_gcs_url
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.utils.db import provide_session
 from google.cloud.bigquery import LoadJobConfig
+
+
 @task
 def read_table():
     """ Return list of tables names to extract """
@@ -41,7 +41,7 @@ def extract_table(table_name: str, postgres_conn_id: str):
 
 @task
 def load_table(
-    data, bigquery_conn_id, project_id, dataset_id, table_name, chunk_size=15000
+    data, bigquery_conn_id, project_id, dataset_id, table_name
 ):
     """ Load data into BigQuery table """
     bq_hook = BigQueryHook(gcp_conn_id=bigquery_conn_id)
@@ -62,7 +62,7 @@ def load_table(
     )
     client = bq_hook.get_client()
     df = pd.DataFrame(data, columns=column_names)
-    client.load_table_from_dataframe(df, f"{dataset_id}.{table_name}", location="europe-west3",job_config=job_config)
+    client.load_table_from_dataframe(df, f"{dataset_id}.{table_name}", location="europe-west3", job_config=job_config)
 
 
 @provide_session
