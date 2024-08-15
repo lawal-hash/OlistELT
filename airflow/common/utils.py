@@ -14,6 +14,7 @@ from airflow.utils.db import provide_session
 
 @task
 def read_table():
+    """ Return list of tables names to extract """
     return [
         "geolocation",
         "customers",
@@ -29,6 +30,7 @@ def read_table():
 
 @task
 def extract_table(table_name: str, postgres_conn_id: str):
+    """ Extract data from Postgres table """
     pg_hook = PostgresHook(postgres_conn_id=postgres_conn_id)
     results = pg_hook.run(
         handler=fetch_all_handler,
@@ -40,48 +42,42 @@ def extract_table(table_name: str, postgres_conn_id: str):
 
 @task
 def load_table(
-    data, bigquery_conn_id, project_id, dataset_id, table_name, chunk_size=5000
+    data, bigquery_conn_id, project_id, dataset_id, table_name, chunk_size=15000
 ):
+    """ Load data into BigQuery table """
     bq_hook = BigQueryHook(gcp_conn_id=bigquery_conn_id)
+    
+        # Truncate table
+        #bq_hook.run_query(f'TRUNCATE TABLE {dataset_id}.{table_name};', location="europe-west3", use_legacy_sql=False)
     schema, column_names = get_schema_from_gcs(table_name, bigquery_conn_id)
+    # Create table if not exists
     bq_hook.create_empty_table(
-        project_id=project_id,
-        dataset_id=dataset_id,
-        table_id=table_name,
-        schema_fields=schema,
-        location="europe-west3 ",
-        exists_ok=True,
-    )
-    # ToDo: Implement idempotent insert
+                project_id=project_id,
+                dataset_id=dataset_id,
+                table_id=table_name,
+                schema_fields=schema,
+                location="europe-west3",
+                exists_ok=True,
+            )
+
+    client = bq_hook.get_client()
     df = pd.DataFrame(data, columns=column_names)
     length = len(df)
     for i in range(0, length, chunk_size):
-        rows = df.iloc[i:i + chunk_size, :].to_json(
-            orient="records", date_format="iso"
-        )
-
-        bq_hook.insert_all(
-            project_id=project_id,
-            dataset_id=dataset_id,
-            table_id=table_name,
-            rows=loads(rows),
-        )
+        rows = df.iloc[i:i + chunk_size, :]
+        client.load_table_from_dataframe(rows, f"{dataset_id}.{table_name}", location="europe-west3")
 
 
 @provide_session
 def cleanup_xcom(session=None, **context):
+    """ Cleanup XCom data for the current DAG """
     dag = context["dag"]
     dag_id = dag._dag_id
     session.query(XCom).filter(XCom.dag_id == dag_id).delete()
 
 
-@provide_session
-def cleanup__xcom(session=None):
-    ts_limit = datetime.now(timezone.utc) - timedelta(days=2)
-    session.query(XCom).filter(XCom.execution_date <= ts_limit).delete()
-
-
 def get_schema_from_gcs(table_name: str, gcp_conn_id) -> tuple:
+    """ Get schema from GCS """
     url = f"gs://bigquery_schema_airflow/schema/{table_name}.json"
     gcs_bucket, gcs_object = _parse_gcs_url(url)
     gcs_hook = GCSHook(gcp_conn_id=gcp_conn_id)
