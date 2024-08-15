@@ -10,8 +10,7 @@ from airflow.providers.google.cloud.hooks.bigquery import BigQueryHook
 from airflow.providers.google.cloud.hooks.gcs import GCSHook, _parse_gcs_url
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.utils.db import provide_session
-
-
+from google.cloud.bigquery import LoadJobConfig
 @task
 def read_table():
     """ Return list of tables names to extract """
@@ -46,26 +45,27 @@ def load_table(
 ):
     """ Load data into BigQuery table """
     bq_hook = BigQueryHook(gcp_conn_id=bigquery_conn_id)
-    
-        # Truncate table
-        #bq_hook.run_query(f'TRUNCATE TABLE {dataset_id}.{table_name};', location="europe-west3", use_legacy_sql=False)
+    if not bq_hook.table_exists(dataset_id=dataset_id, table_id=table_name):
+        # Create table if not exists
+        bq_hook.create_empty_table(
+                    project_id=project_id,
+                    dataset_id=dataset_id,
+                    table_id=table_name,
+                    location="europe-west3",
+                    exists_ok=True,
+                )
     schema, column_names = get_schema_from_gcs(table_name, bigquery_conn_id)
-    # Create table if not exists
-    bq_hook.create_empty_table(
-                project_id=project_id,
-                dataset_id=dataset_id,
-                table_id=table_name,
-                schema_fields=schema,
-                location="europe-west3",
-                exists_ok=True,
-            )
 
+    job_config = LoadJobConfig(
+        schema=schema,
+        write_disposition="WRITE_TRUNCATE",
+    )
     client = bq_hook.get_client()
     df = pd.DataFrame(data, columns=column_names)
-    length = len(df)
-    for i in range(0, length, chunk_size):
-        rows = df.iloc[i:i + chunk_size, :]
-        client.load_table_from_dataframe(rows, f"{dataset_id}.{table_name}", location="europe-west3")
+    #length = len(df)
+    #for i in range(0, length, chunk_size):
+    #    rows = df.iloc[i:i + chunk_size, :]
+    client.load_table_from_dataframe(df, f"{dataset_id}.{table_name}", location="europe-west3",job_config=job_config)
 
 
 @provide_session
