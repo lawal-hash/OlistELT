@@ -7,11 +7,11 @@ from plotly.subplots import make_subplots
 tables = [
     "olist_data.fct_avg_delivery_time",
     "olist_data.fct_orders_by_state",
-    "olist_data.fct_sales_by_catgory",
+    "olist_data.fct_sales_by_category",
 ]
 columns = ["avg_delivery_time_model", "total_orders", "total_sales"]
 titles = ["Average Delivery Time", "Orders by State", "Sales by Category"]
-extra_info = ["Days", "customer_state", "product_category_name"]
+extra_info = ["Days", "customer_state", "product_category"]
 st.markdown(
     "<h1 style='text-align: center; color: white; font-family: Times New Roman;'>Olist Ecommerce Dashboard</h1>",
     unsafe_allow_html=True,
@@ -77,10 +77,11 @@ int_columns = ["total_orders", "total_sales"]
 
 cols = st.columns(len(int_tables), gap="large", vertical_alignment="bottom")
 for idx, (table, col, title) in enumerate(zip(int_tables, int_columns, titles[1:])):
-    query = f"with query  as (select *, rank() over (order by {col} desc) as rank from {table})select * from query where rank <= 5"
+    query = f"with query  as (select  rank() over (order by {col} desc) as rank, * from {table})select * from query where rank <= 5"
     df = run_query(query)
     sorted_df = df.sort_values(by="rank", ascending=True)
-    styled_df = sorted_df.style.format(formatter={col: format_number}).set_properties(
+    df_reset = sorted_df.reset_index(drop=True)
+    styled_df = df_reset.style.format(formatter={col: format_number}).set_properties(
         **{"background-color": "lightblue", "color": "black", "border-color": "white"}
     )
 
@@ -90,4 +91,4 @@ for idx, (table, col, title) in enumerate(zip(int_tables, int_columns, titles[1:
         unsafe_allow_html=True,
     )
 
-    cols[idx].dataframe(styled_df, height=200, width=1350)
+    cols[idx].dataframe(styled_df, height=200, width=1350, hide_index=True)
