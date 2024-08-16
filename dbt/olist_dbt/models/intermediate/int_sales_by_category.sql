@@ -9,8 +9,13 @@ with sales as (
     join {{ ref('stg_products')}} p
     using (product_id)
 
-)
+), grouped_sales as (
 select product_category_name,
 sum(price) as total_sales
 from sales
-GROUP BY product_category_name
+GROUP BY product_category_name)
+
+select pcnt.product_category_name_english as product_category, total_sales
+from grouped_sales
+join {{ ref('product_category_name_translation')}}  pcnt
+using (product_category_name)
