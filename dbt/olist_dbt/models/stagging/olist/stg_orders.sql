@@ -10,7 +10,7 @@ with raw_orders as (
     order_delivered_customer_date, 
     order_estimated_delivery_date
     from {{ source("olist","orders") }}
-    where order_status = 'delivered'
+    where order_status = 'delivered' and  order_delivered_customer_date is not null
 
 )
 
