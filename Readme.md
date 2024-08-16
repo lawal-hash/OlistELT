@@ -1,9 +1,10 @@
 
 # OlistELT Pipeline
+<div align="center">
  <img src="https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54" alt="Python" width="85" height="13" />
  <img src="https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white" alt="Postgres" width="85" height="13" />
  <img src="https://img.shields.io/badge/Apache%20Airflow-017CEE?style=for-the-badge&logo=Apache%20Airflow&logoColor=white" alt="Apache Airflow" width="85" height="13" />
-
+</div>
 
 ![pipeline](images/final_diagram.png)
 
@@ -56,13 +57,13 @@ postgre_docker_init/
 Clone the project
 
 ```bash
-  git clone https://link-to-project
+  git clone https://github.com/lawal-hash/OlistELT.git
 ```
 
 Go to the project directory
 
 ```bash
-  cd my-project
+  cd OlistELT
 ```
 
 Install dependencies
