@@ -1,7 +1,23 @@
 
-# OLISTELT Pipeline
+# OlistELT Pipeline
 
-A brief description of what this project does and who it's for
+![pipeline](images/final_diagram.png)
+
+
+## Tech Stack
+
+
+
+
+
+## Screenshots
+
+![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+
+
+## Demo
+
+Insert gif or link to demo
 
 
 
@@ -33,7 +49,7 @@ postgre_docker_init/
 |    └── service-account.json
 |
 └── dashboard/
-    ├── .streamlit/
+    └── .streamlit/
         └── secrets.toml
 
 ```
@@ -48,7 +64,7 @@ Clone the project
 Go to the project directory
 
 ```bash
-  cd OlistELT
+  cd my-project
 ```
 
 Install dependencies
@@ -85,8 +101,18 @@ Add the following connection ids from with Airflow UI. Go to Admin -> Connection
 values `xxx` are the same as the one in Postgres .env file.
 
 
-Change the Dag state from *paused* to *active*. Ensure the Dag status is sucessful before proceeding to the remaining step below.
-| Folder | Command one| Command two|
+Change the Dag state from *paused* to *active*. Ensure the Dag status is sucessful before proceeding to the next step.
+| Folder | Command one| Command two|  
 | -------- | -------- | --------|
-|  dbt |`cd dbt` | `dbt run` |
+|  dbt |`cd dbt/olist_dbt` | `chmod +x run.sh && ./run.sh` | 
+
+Start the dashboard server using the command below
+
+| Folder | Command one| Command two|
+--------|--------|--------|
 |dashboard |`cd dashboard` | `streamlit run app.py`|
+
+## Authors
+
+- [@lawal-hash](https://github.com/lawal-hash)
+
