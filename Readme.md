@@ -1,23 +1,21 @@
 
 # OlistELT Pipeline
+ <img src="https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54" alt="Python" width="85" height="13" />
+ <img src="https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white" alt="Postgres" width="85" height="13" />
+ <img src="https://img.shields.io/badge/Apache%20Airflow-017CEE?style=for-the-badge&logo=Apache%20Airflow&logoColor=white" alt="Apache Airflow" width="85" height="13" />
+
 
 ![pipeline](images/final_diagram.png)
 
-
-## Tech Stack
-
-
-
-
-
-## Screenshots
-
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
-
-
 ## Demo
 
-Insert gif or link to demo
+<img src="images/airfow_two.gif" alt="pipeline" width="640" height="400">
+
+## Screenshots
+![pipeline](images/airflow_graph.png)
+
+
+![pipeline](images/dashboard.png)
 
 
 
