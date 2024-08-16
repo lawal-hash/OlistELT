@@ -12,4 +12,4 @@ with order_by_state  as (
 
 select customer_state, total_orders
 from order_by_state
-where category_rank = 1
+where category_rank <= 5

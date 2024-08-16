@@ -34,7 +34,7 @@ fig = make_subplots(
 for idx, (table, column, title, info,prefix, suffix) in enumerate(
     zip(tables, columns, titles, extra_info,prefixes, suffixes)
 ):
-    query = f"SELECT * FROM {table}"
+    query = f"SELECT * FROM {table} where rank = 1"
     df = run_query(query)
     output = df.to_dict(orient="records")
     #formated_prefix = f"<span style='font-size:35px; color:white;'>{prefix}</span>"

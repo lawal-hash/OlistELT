@@ -10,6 +10,6 @@ with sales  as (
 
 select product_category, total_sales
 from sales
-where category_rank = 1
+where category_rank <= 5
 
 

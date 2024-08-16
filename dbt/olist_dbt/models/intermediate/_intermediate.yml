@@ -10,7 +10,7 @@ models:
         description: average delivery time for an order
 
   - name: int_orders_by_state
-    description: This table contains the aggregated number of orders by state
+    description: This table contains the aggregated count of orders by state
     columns:
       - name: customer_state
         description: customer state name
