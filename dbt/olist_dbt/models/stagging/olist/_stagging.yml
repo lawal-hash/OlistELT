@@ -1,0 +1,93 @@
+version: 2
+
+models:
+  - name: stg_customers
+    description: This table contains information about customers
+    columns:
+      - name: customer_id
+        description: unique identifier for a customer
+        tests:
+          - unique
+          - not_null
+      - name: customer_unique_id
+        description: identifier for a customer with multiple orders
+        tests:
+          - not_null
+      - name: customer_zip_code_prefix
+        description: customer zip code
+        tests:
+          - not_null
+      - name: customer_city
+        description: customer city name
+      - name: customer_state
+        description: customer state name
+
+  - name: stg_order_items
+    description: This table contains information about order items
+    columns:
+      - name: order_id
+        description: foriegn key to the order table
+        tests:
+          - unique
+          - not_null
+      - name: order_item_id
+        description: identifier for an order item
+        tests:
+          - unique
+          - not_null
+      - name: product_id
+        description: foriegn key to the product table
+        tests:
+          - not_null
+      - name: seller_id
+        description: foriegn key to the seller table
+        tests:
+          - not_null
+      - name: shipping_limit_date
+        description: shipping limit date
+      - name: price
+        description: amount paid for the product
+      - name: freight_value
+        description: amount paid for shipping
+
+  - name: stg_orders
+    description: This table contains information about orders
+    columns:
+      - name: order_id
+        description: unique identifier for an order
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: foriegn key to the customer table
+        tests:
+          - not_null
+      - name: order_status
+        description: shows the status of the order, e.g. delivered, shipped, canceled, pending
+        tests:
+          - not_null
+      - name: order_purchase_timestamp
+        description: date when the order was purchased
+      - name: order_approved_at
+        description: date when the order was approved
+      - name: order_delivered_carrier_date
+        description: date when the order was delivered to the  shipping carrier
+      - name: order_delivered_customer_date
+        description: date when the order was delivered to the customer
+        tests:
+          - not_null
+      - name: order_estimated_delivery_date
+        description:  estimated delivery date
+
+
+  - name: stg_products
+    description: This table contains information about products
+    columns:
+      - name: product_id
+        description: unique identifier for a product
+        tests:
+          - unique
+          - not_null
+      - name: product_category_name
+        description: name of the product category
+

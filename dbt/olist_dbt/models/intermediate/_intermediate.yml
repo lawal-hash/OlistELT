@@ -1,0 +1,26 @@
+version: 2
+
+models:
+  - name: int_avg_delivery_time
+    description: This table contains the average delivery time for each order
+    columns:
+      - name: order_id
+        description: unique identifier for an order
+      - name: average_delivery_time
+        description: average delivery time for an order
+
+  - name: int_orders_by_state
+    description: This table contains the aggregated number of orders by state
+    columns:
+      - name: customer_state
+        description: customer state name
+      - name: total_orders
+        description: total number of orders by state
+
+  - name: int_sales_by_category
+    description: This table contains the aggregated sales by product category
+    columns:
+      - name: product_category
+        description: product category name
+      - name: total_sales
+        description: sum of sales by product category

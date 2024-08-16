@@ -1,0 +1,19 @@
+version: 2
+
+models:
+  - name: fct_avg_delivery_time
+    description: This table contains the average delivery time for all orders
+    columns:
+      - name: average_delivery_time
+
+  - name: fct_orders_by_state
+    description: This table contains highest order by state    
+    columns:
+      - name: customer_state
+      - name: total_orders 
+
+  - name: fct_sales_by_category
+    description: This table contains the highest sales by product category
+    columns:
+      - name: product_category
+      - name: total_sales
