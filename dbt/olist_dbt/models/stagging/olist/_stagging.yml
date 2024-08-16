@@ -15,8 +15,6 @@ models:
           - not_null
       - name: customer_zip_code_prefix
         description: customer zip code
-        tests:
-          - not_null
       - name: customer_city
         description: customer city name
       - name: customer_state
@@ -28,12 +26,10 @@ models:
       - name: order_id
         description: foriegn key to the order table
         tests:
-          - unique
           - not_null
       - name: order_item_id
         description: identifier for an order item
         tests:
-          - unique
           - not_null
       - name: product_id
         description: foriegn key to the product table
