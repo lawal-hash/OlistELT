@@ -11,6 +11,8 @@ tables = [
 ]
 columns = ["avg_delivery_time_model", "total_orders", "total_sales"]
 titles = ["Average Delivery Time", "Orders by State", "Sales by Category"]
+prefixes = ["", "", "R$"]
+suffixes = ["", "QTY", ""]
 extra_info = ["Days", "customer_state", "product_category"]
 st.markdown(
     "<h1 style='text-align: center; color: white; font-family: Times New Roman;'>Olist Ecommerce Dashboard</h1>",
@@ -29,13 +31,16 @@ def run_query(query):
 fig = make_subplots(
     rows=1, cols=3, specs=[[{"type": "domain"}, {"type": "domain"}, {"type": "domain"}]]
 )
-for idx, (table, column, title, info) in enumerate(
-    zip(tables, columns, titles, extra_info)
+for idx, (table, column, title, info,prefix, suffix) in enumerate(
+    zip(tables, columns, titles, extra_info,prefixes, suffixes)
 ):
     query = f"SELECT * FROM {table}"
     df = run_query(query)
     output = df.to_dict(orient="records")
-    print(output)
+    #formated_prefix = f"<span style='font-size:35px; color:white;'>{prefix}</span>"
+    formated_prefix = f"<span style='font-size:40px; color:white; text-align:right; display:block; font-family:Times New Roman;'>{prefix}</span>"
+    formated_suffix = f"<span style='font-size:12px; color:gray;  font-family:Times New Roman;'>{suffix}</span>"
+
     fig.add_trace(
         go.Indicator(
             mode="number",
@@ -46,7 +51,9 @@ for idx, (table, column, title, info) in enumerate(
                 "font": {"size": 14},
             },
             number={
-                "font": {"size": 70, "color": "white", "family": "Times New Roman"}
+                "prefix": formated_prefix,
+                "suffix": formated_suffix,
+                "font": {"size": 50, "color": "white", "family": "Times New Roman"}
             },
         ),
         row=1,
@@ -54,7 +61,7 @@ for idx, (table, column, title, info) in enumerate(
     )
 
 fig.update_layout(
-    margin=dict(t=50, b=50, l=50, r=50),
+    margin=dict(t=50, b=50, l=0, r=40),
     height=200,
 )
 
