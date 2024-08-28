@@ -1,9 +1,14 @@
 
 # OlistELT Pipeline
 <div align="center">
- <img src="https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54" alt="Python" width="85" height="13" />
- <img src="https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white" alt="Postgres" width="85" height="13" />
- <img src="https://img.shields.io/badge/Apache%20Airflow-017CEE?style=for-the-badge&logo=Apache%20Airflow&logoColor=white" alt="Apache Airflow" width="85" height="13" />
+   <img alt="Static Badge" src="https://img.shields.io/badge/Python%09-white?logo=python">
+   <img alt="Static Badge" src="https://img.shields.io/badge/PostgreSQL%09-white?logo=postgresql">
+   <img alt="Static Badge" src="https://img.shields.io/badge/bigquery%20-white?logo=googlebigquery">
+   <img alt="Static Badge" src="https://img.shields.io/badge/dbt%09-white?logo=dbt">
+   <img alt="Static Badge" src="https://img.shields.io/badge/Apache%20Airflow%20-white?logo=apacheairflow&logoColor=green">
+   <img alt="Static Badge" src="https://img.shields.io/badge/Docker%20-white?logo=docker">
+   <img alt="Static Badge" src="https://img.shields.io/badge/Google%20Cloud%09-white?logo=googlecloud" >
+   <img alt="Static Badge" src="https://img.shields.io/badge/Git%09-white?logo=git">
 </div>
 
 ![pipeline](images/final_diagram.png)
